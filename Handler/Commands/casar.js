@@ -65,9 +65,3 @@ module.exports = {
     });
   },
 };
-
-// Exemplo de funções do banco de dados (utils/database.js):
-// async function getCasamento(id1, id2) { ... }
-// async function casar(id1, id2, data) { ... }
-
-// Para cobrança mensal, crie um job agendado que verifica casamentos e cobra 100 estrelas todo mês na data do casamento.

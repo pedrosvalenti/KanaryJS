@@ -26,7 +26,7 @@ module.exports = {
     let casamentoInfo = null;
     let casadoCom = null;
     if (db && typeof db.getCasamento === 'function') {
-      const casamentos = require('../utils/casamentos.json');
+      const casamentos = require('../../utils/casamentos.json');
       casamentoInfo = casamentos.find(c => c.proposer === userId || c.member === userId);
       if (casamentoInfo) {
         casadoCom = casamentoInfo.proposer === userId ? casamentoInfo.member : casamentoInfo.proposer;
