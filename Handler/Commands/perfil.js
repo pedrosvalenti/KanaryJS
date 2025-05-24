@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const db = require('../utils/database');
+const db = require('../../utils/database');
 
 const DATA_PATH = path.join(__dirname, 'estrelas.json');
 
