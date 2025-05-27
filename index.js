@@ -15,7 +15,6 @@ const client = new Client({
 client.commands = new Collection();
 
 // Carregar comandos de /Commands e subpastas
-const commands = [];
 const commandFiles = [];
 const walkSync = (dir) => {
     const files = fs.readdirSync(dir, { withFileTypes: true });
@@ -29,11 +28,17 @@ const walkSync = (dir) => {
 };
 walkSync('./Handler/Commands');
 
+const uniqueCommands = new Map();
 for (const file of commandFiles) {
     const command = require(file);
-    client.commands.set(command.data.name, command);
-    commands.push(command.data.toJSON());
+    if (!uniqueCommands.has(command.data.name)) {
+        client.commands.set(command.data.name, command);
+        uniqueCommands.set(command.data.name, command.data.toJSON());
+    } else {
+        console.warn(`Comando duplicado ignorado: ${command.data.name} (${file})`);
+    }
 }
+const commands = Array.from(uniqueCommands.values());
 
 // Registrar slash commands na API do Discord
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);

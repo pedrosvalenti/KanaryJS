@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const db = require('../../utils/database');
+const db = require('../../../utils/database');
 
 const DATA_PATH = path.join(__dirname, 'estrelas.json');
 
@@ -16,32 +16,43 @@ function loadData() {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('perfil')
-    .setDescription('Veja seu perfil e suas informações relacionadas ao bot!'),
+    .setDescription('Veja seu perfil e suas informações relacionadas ao bot!')
+    .addUserOption(option =>
+      option.setName('usuario')
+        .setDescription('Veja o perfil de outro membro')
+        .setRequired(false)
+    ),
   async execute(interaction) {
-    const userId = interaction.user.id;
+    const user = interaction.options.getUser('usuario') || interaction.user;
     const data = loadData();
-    const userData = data[userId] || { estrelas: 0 };
+    const userData = data[user.id] || { estrelas: 0 };
 
-    // Verifica se o usuário está casado
-    let casamentoInfo = null;
-    let casadoCom = null;
-    if (db && typeof db.getCasamento === 'function') {
-      const casamentos = require('../../utils/casamentos.json');
-      casamentoInfo = casamentos.find(c => c.proposer === userId || c.member === userId);
-      if (casamentoInfo) {
-        casadoCom = casamentoInfo.proposer === userId ? casamentoInfo.member : casamentoInfo.proposer;
-      }
+    // Verifica casamento
+    let casamentoInfo = '💔 Solteiro(a)';
+    let tempoCasado = '';
+    const casamentos = require('../../../utils/casamentos.json');
+    const casamento = casamentos.find(c => c.proposer === user.id || c.member === user.id);
+    if (casamento) {
+      const parceiroId = casamento.proposer === user.id ? casamento.member : casamento.proposer;
+      const parceiro = await interaction.client.users.fetch(parceiroId).catch(() => null);
+      const parceiroTag = parceiro ? parceiro.tag : `ID: ${parceiroId}`;
+      const dataCasamento = new Date(casamento.data);
+      const agora = new Date();
+      const diffMs = agora - dataCasamento;
+      const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const diffHoras = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+      casamentoInfo = `💍 Casado(a) com ${parceiro ? `<@${parceiroId}>` : parceiroTag}`;
+      tempoCasado = `⏳ Juntos há ${diffDias} dias e ${diffHoras} horas`;
     }
 
     const embed = new EmbedBuilder()
       .setColor(0xFFD700)
-      .setTitle(`Perfil de ${interaction.user.username}`)
-      .setThumbnail(interaction.user.displayAvatarURL())
-      .addFields(
-        { name: '⭐ Estrelas', value: `${userData.estrelas}`, inline: true },
-        casamentoInfo
-          ? { name: '💍 Estado civil', value: `Casado(a) com <@${casadoCom}>`, inline: true }
-          : { name: '💍 Estado civil', value: 'Solteiro(a)', inline: true }
+      .setAuthor({ name: `Perfil de ${user.username}`, iconURL: user.displayAvatarURL() })
+      .setThumbnail(user.displayAvatarURL())
+      .setDescription(
+        `**⭐ Estrelas:** ${userData.estrelas}\n` +
+        `**Status amoroso:** ${casamentoInfo}` +
+        (tempoCasado ? `\n**Tempo de casamento:** ${tempoCasado}` : '')
       )
       .setFooter({ text: 'KanaryBOT • Perfil' })
       .setTimestamp();
