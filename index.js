@@ -14,12 +14,23 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// Carregar comandos de /Commands
+// Carregar comandos de /Commands e subpastas
 const commands = [];
-const commandFiles = fs.readdirSync('./Handler/Commands').filter(file => file.endsWith('.js'));
+const commandFiles = [];
+const walkSync = (dir) => {
+    const files = fs.readdirSync(dir, { withFileTypes: true });
+    for (const file of files) {
+        if (file.isDirectory()) {
+            walkSync(`${dir}/${file.name}`);
+        } else if (file.name.endsWith('.js')) {
+            commandFiles.push(`${dir}/${file.name}`);
+        }
+    }
+};
+walkSync('./Handler/Commands');
 
 for (const file of commandFiles) {
-    const command = require(`./Handler/Commands/${file}`);
+    const command = require(file);
     client.commands.set(command.data.name, command);
     commands.push(command.data.toJSON());
 }
