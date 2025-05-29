@@ -31,6 +31,14 @@ walkSync('./Handler/Commands');
 const uniqueCommands = new Map();
 for (const file of commandFiles) {
     const command = require(file);
+    if (!command || !command.data || !command.data.name) {
+        console.warn(`[WARN] Arquivo ignorado (sem data.name): ${file}`);
+        continue;
+    }
+    if (typeof command.data.toJSON !== 'function') {
+        console.warn(`[WARN] Comando ignorado (sem data.toJSON): ${file}`);
+        continue;
+    }
     if (!uniqueCommands.has(command.data.name)) {
         client.commands.set(command.data.name, command);
         uniqueCommands.set(command.data.name, command.data.toJSON());
