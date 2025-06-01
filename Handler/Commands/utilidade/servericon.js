@@ -20,7 +20,7 @@ module.exports = {
                 color: 0x0099ff,
                 title: `Ícone do servidor: ${guild.name}`,
                 image: { url: iconUrl },
-                description: `ID: ${guild.id}`,
+                description: `**ID:** ${guild.id}`,
             };
             await interaction.reply({ embeds: [embed] });
         } catch (err) {
@@ -43,7 +43,7 @@ module.exports = {
                 color: 0x0099ff,
                 title: `Ícone do servidor: ${guild.name}`,
                 image: { url: iconUrl },
-                description: `ID: ${guild.id}`,
+                description: `**ID:** ${guild.id}`,
             };
             await message.channel.send({ embeds: [embed] });
         } catch (err) {

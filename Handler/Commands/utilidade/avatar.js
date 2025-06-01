@@ -16,7 +16,7 @@ module.exports = {
             color: 0x0099ff,
             title: `Avatar de ${user.tag}`,
             image: { url: avatarUrl },
-            description: `Este é o avatar de ${user}`,
+            description: `**Usuário:** ${user}\n**ID:** ${user.id}`,
         };
 
         await interaction.reply({ embeds: [embed] });
@@ -30,7 +30,7 @@ module.exports = {
             color: 0x0099ff,
             title: `Avatar de ${user.tag}`,
             image: { url: avatarUrl },
-            description: `Este é o avatar de ${user}`,
+            description: `**Usuário:** ${user}\n**ID:** ${user.id}`,
         };
 
         await message.channel.send({ embeds: [embed] });

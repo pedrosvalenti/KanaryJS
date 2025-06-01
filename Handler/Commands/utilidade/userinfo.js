@@ -16,15 +16,13 @@ module.exports = {
             color: 0x5865F2,
             title: `👤 Informações de ${user.tag}`,
             thumbnail: { url: user.displayAvatarURL({ dynamic: true, size: 256 }) },
-            description: `Aqui estão algumas informações sobre <@${user.id}>:`,
-            fields: [
-                { name: '🆔 ID', value: `[1m${user.id}[0m`, inline: true },
-                { name: '🎉 Entrou no servidor', value: `<t:${Math.floor(member.joinedTimestamp / 1000)}:F>`, inline: true },
-                { name: '📅 Conta criada', value: `<t:${Math.floor(user.createdTimestamp / 1000)}:F>`, inline: true },
-                { name: '🤖 Bot?', value: user.bot ? 'Sim' : 'Não', inline: true },
-                { name: '🏷️ Apelido', value: member.nickname ? member.nickname : 'Nenhum', inline: true },
-                { name: '🎭 Cargos', value: member.roles.cache.filter(r => r.id !== interaction.guild.id).map(r => `<@&${r.id}>`).join(', ') || 'Nenhum', inline: false },
-            ],
+            description:
+                `**🆔 ID:** ${user.id}\n` +
+                `**🎉 Entrou no servidor:** <t:${Math.floor(member.joinedTimestamp / 1000)}:F>\n` +
+                `**📅 Conta criada:** <t:${Math.floor(user.createdTimestamp / 1000)}:F>\n` +
+                `**🤖 Bot?:** ${user.bot ? 'Sim' : 'Não'}\n` +
+                `**🏷️ Apelido:** ${member.nickname ? member.nickname : 'Nenhum'}\n` +
+                `**🎭 Cargos:** ${member.roles.cache.filter(r => r.id !== interaction.guild.id).map(r => `<@&${r.id}>`).join(', ') || 'Nenhum'}`,
             footer: { text: `KanaryBOT • UserInfo • ${interaction.guild.name}` },
             timestamp: new Date().toISOString()
         };
